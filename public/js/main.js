@@ -71,7 +71,9 @@ socket.on("sendInfo", (r) => {
     });
 });
 
-socket.on("grantLeader", () => {});
+socket.on("restart", () => {
+    window.location.reload();
+});
 
 buzzer.onclick = buzz;
 

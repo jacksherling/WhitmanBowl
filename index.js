@@ -1,5 +1,4 @@
 // import libraries
-const e = require("cors");
 const express = require("express");
 const socket = require("socket.io");
 
@@ -106,5 +105,15 @@ io.on("connection", (s) => {
         io.to(roomId).emit("sendInfo", room);
     }
 
-    s.on("disconnect", () => {});
+    s.on("disconnect", () => {
+        try {
+            if (room.leader == id) {
+                io.to(roomId).emit("restart");
+                delete rooms[roomId];
+            } else {
+                // io.to(room).emit("player-left", { name: name, id: id });
+                // rooms[room].players.filter((player) => player.id !== id);
+            }
+        } catch {}
+    });
 });
