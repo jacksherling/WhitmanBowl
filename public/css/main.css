@@ -56,6 +56,7 @@ body {
 
 #buzzer:hover > #visible-buzzer {
     background: #9696ff;
+    width: 100%;
 }
 
 .room-table-item {

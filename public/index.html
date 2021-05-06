@@ -4,9 +4,42 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="css/main.css" />
         <title>Whitman Bowl</title>
     </head>
     <body>
+        <!-- <div id="leader"></div>
+        <div id="players"></div>
+        <button id="buzz">Buzz!</button> -->
+
+       <div id="room-table">
+            <div class="room-table-item" id="room-code"></div>
+            <div class="room-table-item" id="room-link"></div>
+            <div class="room-table-item" id="leader"></div>
+        </div>
+
+        <table id="leader-controls">
+            <tbody id="stuff">
+                <tr>
+                    <td colspan="2">
+                        <div id="buzzer">
+                            <div id="visible-buzzer">Buzz</div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table id="players">
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Status</th>
+            </tr>
+        </table>
+    </body>
+
         <script defer src="js/socket.io.min.js"></script>
         <script defer src="js/main.js"></script>
     </body>

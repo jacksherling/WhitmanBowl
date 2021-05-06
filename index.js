@@ -51,52 +51,60 @@ io.on("connection", (s) => {
 
     // console.log(`Socket (${id}) made!`);
     s.on("join", (data) => {
-        let { name, room } = data;
-        roomId = room;
-        if (!rooms[room]) {
-            rooms[room] = {
+        let { name, _roomId } = data;
+        roomId = _roomId;
+        s.join(roomId);
+        if (rooms[_roomId] == undefined) {
+            rooms[_roomId] = {
                 cleared: true,
                 players: [],
                 leader: id,
+                leaderName: name,
             };
+            s.emit("grantLeader");
         } else {
-            rooms[room].players.push({
+            rooms[_roomId].players.push({
                 name: name,
                 id: id,
                 score: 0,
                 buzzed: false,
             });
         }
-        s.join(roomId);
-        room = rooms[room];
+        room = rooms[_roomId];
+        io.to(roomId).emit("sendInfo", room);
     });
 
     s.on("clear", () => {
-        if (room.leader !== id) {
+        if (room.leader !== id || room.cleared) {
             return;
         }
-        room.cleared = true;
+        clear();
     });
 
     s.on("buzz", () => {
-        if (!room.cleared) {
+        if (!room.cleared || room.leader == s.id) {
             return;
         }
         room.cleared = false;
         room.players.find((v) => v.id == id).buzzed = true;
-        s.to(roomId).emit("");
+        io.to(roomId).emit("sendInfo", room);
     });
 
     s.on("scorechange", (value) => {
-        if (room.leader !== id) {
+        if (room.leader !== id || room.cleared) {
             return;
         }
         const buzzedPlayer = room.players.find((v) => v.buzzed);
         buzzedPlayer.score += value;
-        buzzedPlayer.buzzed = false;
-        room.cleared = true;
-        s.emit("sendInfo", room);
+        clear();
     });
+
+    function clear() {
+        room.cleared = true;
+        const buzzedPlayer = room.players.find((v) => v.buzzed);
+        buzzedPlayer.buzzed = false;
+        io.to(roomId).emit("sendInfo", room);
+    }
 
     s.on("disconnect", () => {});
 });
