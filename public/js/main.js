@@ -10,6 +10,7 @@ const playersDiv = document.getElementById("players");
 const leaderDiv = document.getElementById("leader");
 const buzzer = document.getElementById("visible-buzzer");
 const leaderControls = document.getElementById("leader-controls");
+const s = new sound("audio/ding.mp3"); // new sound element
 
 // set room information
 document.getElementById("room-code").innerText = "Room code: " + room;
@@ -49,6 +50,9 @@ socket.on("grantLeader", () => {
 
 // information updates for buzzes/score changes/player join events
 socket.on("sendInfo", (r) => {
+    if (!r.cleared && canBuzz) {
+        s.play();
+    }
     canBuzz = r.cleared;
     const sortedByScore = r.players.sort((a, b) => b.score - a.score);
     playersDiv.innerHTML = "";
@@ -87,4 +91,20 @@ function buzz() {
     if (canBuzz) {
         socket.emit("buzz");
     }
+}
+
+// from w3 schools
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function () {
+        this.sound.play();
+    };
+    this.stop = function () {
+        this.sound.pause();
+    };
 }
