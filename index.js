@@ -48,11 +48,12 @@ io.on("connection", (s) => {
     let room;
     let roomId;
 
-    // console.log(`Socket (${id}) made!`);
+    // player joins room
     s.on("join", (data) => {
         let { name, _roomId } = data;
         roomId = _roomId;
         s.join(roomId);
+        // if room does not exist
         if (rooms[_roomId] == undefined) {
             rooms[_roomId] = {
                 cleared: true,
@@ -61,7 +62,7 @@ io.on("connection", (s) => {
                 leaderName: name,
             };
             s.emit("grantLeader");
-        } else {
+        } else { // if room already exists
             rooms[_roomId].players.push({
                 name: name,
                 id: id,
@@ -73,6 +74,7 @@ io.on("connection", (s) => {
         io.to(roomId).emit("sendInfo", room);
     });
 
+    // clear buzzes event
     s.on("clear", () => {
         if (room.leader !== id || room.cleared) {
             return;
@@ -80,6 +82,7 @@ io.on("connection", (s) => {
         clear();
     });
 
+    // buzz event
     s.on("buzz", () => {
         if (!room.cleared || room.leader == s.id) {
             return;
@@ -89,6 +92,7 @@ io.on("connection", (s) => {
         io.to(roomId).emit("sendInfo", room);
     });
 
+    // change player score
     s.on("scorechange", (value) => {
         if (room.leader !== id || room.cleared) {
             return;
@@ -98,6 +102,7 @@ io.on("connection", (s) => {
         clear();
     });
 
+    // clears buzzes
     function clear() {
         room.cleared = true;
         const buzzedPlayer = room.players.find((v) => v.buzzed);
@@ -105,6 +110,7 @@ io.on("connection", (s) => {
         io.to(roomId).emit("sendInfo", room);
     }
 
+    // when a player leaves
     s.on("disconnect", () => {
         try {
             if (room.leader == id) {

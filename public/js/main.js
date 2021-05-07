@@ -11,24 +11,30 @@ const leaderDiv = document.getElementById("leader");
 const buzzer = document.getElementById("visible-buzzer");
 const leaderControls = document.getElementById("leader-controls");
 
+// set room information
 document.getElementById("room-code").innerText = "Room code: " + room;
 document.getElementById(
     "room-link"
 ).innerHTML = `Join link: ${window.location.href}`;
 
+// send player join event to server
 socket.emit("join", { _roomId: room, name: name });
 
-// leader only
+// leader only, clears buzzes
 function clear() {
     if (!canBuzz) {
         socket.emit("clear");
     }
 }
 
+// when user is first in room they will be granted leader permissions
 socket.on("grantLeader", () => {
+    // clear button
     buzzer.innerText = "Clear";
     buzzer.onclick = clear;
     document.onkeydown = null;
+
+    // correct/incorrect buttons
     let newRow = leaderControls.insertRow();
     newRow.setAttribute("colspace", 2);
     newRow.insertCell().innerHTML = `<div id="correct">Correct</div>`;
@@ -41,21 +47,13 @@ socket.on("grantLeader", () => {
     };
 });
 
+// information updates for buzzes/score changes/player join events
 socket.on("sendInfo", (r) => {
     canBuzz = r.cleared;
-    // leaderDiv.innerHTML = `
-    // Leader: ${r.leaderName} Room ID: ${room} Join link: ${window.location.href}
-    // `;
     const sortedByScore = r.players.sort((a, b) => b.score - a.score);
     playersDiv.innerHTML = "";
-    // sortedByScore.forEach((player) => {
-    //     playersDiv.innerHTML += `
-    //     <div class="player">
-    //         ${player.name} ${player.score} ${player.buzzed ? "BUZZ" : ""}
-    //     </div>
-    //     `;
-    // });
     leaderDiv.innerText = "Leader: " + r.leaderName;
+    // adding all players
     playersDiv.innerHTML =
         "<tr><th>Rank</th><th>Name</th><th>Score</th><th>Status</th></tr>";
     sortedByScore.forEach((player, i) => {
@@ -71,10 +69,12 @@ socket.on("sendInfo", (r) => {
     });
 });
 
+// refresh page if leader leaves
 socket.on("restart", () => {
     window.location.reload();
 });
 
+// buzzing events
 buzzer.onclick = buzz;
 
 document.onkeydown = (e) => {
