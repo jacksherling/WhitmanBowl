@@ -16,7 +16,7 @@ document.getElementById(
     "room-link"
 ).innerHTML = `Join link: ${window.location.href}`;
 
-socket.emit("join", { room: room, name: name });
+socket.emit("join", { _roomId: room, name: name });
 
 // leader only
 function clear() {
