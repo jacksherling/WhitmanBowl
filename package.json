@@ -1,7 +1,7 @@
 {
   "name": "whitmanbowl",
   "version": "1.0.0",
-  "description": "",
+  "description": "a quizbowl/trivia buzzer",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -13,5 +13,13 @@
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "socket.io": "^3.0.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jacksherling/WhitmanBowl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jacksherling/WhitmanBowl/issues"
+  },
+  "homepage": "https://github.com/jacksherling/WhitmanBowl#readme"
 }
