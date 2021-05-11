@@ -62,7 +62,8 @@ io.on("connection", (s) => {
                 leaderName: name,
             };
             s.emit("grantLeader");
-        } else { // if room already exists
+        } else {
+            // if room already exists
             rooms[_roomId].players.push({
                 name: name,
                 id: id,
@@ -84,7 +85,7 @@ io.on("connection", (s) => {
 
     // buzz event
     s.on("buzz", () => {
-        if (!room.cleared || room.leader == s.id) {
+        if (!room || !room.cleared || room.leader == s.id) {
             return;
         }
         room.cleared = false;
